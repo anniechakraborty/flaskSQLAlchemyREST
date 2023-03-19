@@ -71,6 +71,14 @@ def add_product():
     return product_schema.jsonify(new_product) 
     # we return this new product to our client after it's created and inserted into the database
 
+# Get all products
+@app.route('/product', methods=['GET'])
+def get_all_products():
+    all_products = ProductClass.query.all()
+    print(all_products)
+    print(type(all_products))
+    result = products_schema.dump(all_products, many=True)
+    return jsonify(result)
 
 # Run server
 if __name__ == '__main__':
