@@ -53,6 +53,25 @@ class ProductSchema(ma.Schema):
 product_schema = ProductSchema()
 products_schema = ProductSchema(many=True) # many = True indicates that we are dealing with multiple products
 
+# Create a product
+@app.route('/product', methods=['POST'])
+def add_product():
+    # we are bringing in the data passed by postman (or any other osurce from which we get data)
+    name = request.json['name']
+    description = request.json['description']
+    price = request.json['price']
+    qty = request.json['qty']
+
+    # instatiating an object of the ProductClass
+    new_product = ProductClass(name, description, price, qty)
+
+    db.session.add(new_product)
+    db.session.commit() # this will commit the transaction to the database
+
+    return product_schema.jsonify(new_product) 
+    # we return this new product to our client after it's created and inserted into the database
+
+
 # Run server
 if __name__ == '__main__':
     app.run(debug=True)
