@@ -1,0 +1,48 @@
+This is just for my reference, as I learn this new technology.
+
+We have initalised SQLAlchemy and created our product class and product schema and initalised them both.
+To create the database, we open the python shell and run the following codes :
+
+from app import db
+db.create_all()
+
+line no 6 : will import the db properties (of the SQLAlchemy) we have declared in the app.py file
+line no 7 : calls the create_all() function to create the database, the fields and schema as we have declared and initalised in app.py and creates the db.sqlite file
+
+line no 7  didn't work as expected and we got this error:
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "C:\Users\ANNIE CHAKRABORTY\.virtualenvs\flaskSQLAlchemyREST-8ZatBr8k\lib\site-packages\flask_sqlalchemy\extension.py", line 884, in create_all
+    self._call_for_binds(bind_key, "create_all")
+  File "C:\Users\ANNIE CHAKRABORTY\.virtualenvs\flaskSQLAlchemyREST-8ZatBr8k\lib\site-packages\flask_sqlalchemy\extension.py", line 855, in _call_for_binds
+    engine = self.engines[key]
+  File "C:\Users\ANNIE CHAKRABORTY\.virtualenvs\flaskSQLAlchemyREST-8ZatBr8k\lib\site-packages\flask_sqlalchemy\extension.py", line 636, in engines
+    app = current_app._get_current_object()  # type: ignore[attr-defined]
+  File "C:\Users\ANNIE CHAKRABORTY\.virtualenvs\flaskSQLAlchemyREST-8ZatBr8k\lib\site-packages\werkzeug\local.py", line 513, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+
+// youtube comment :
+If when running "db.create_all()" from the Python interpreter you experience 
+"RuntimeError: Working outside of application context.", instead run the following three lines:
+>>> from app import app, db
+>>> app.app_context().push()
+>>> db.create_all()
+
+// another helpful comment :
+For anyone confused about how the table name is generated, I just realized that on executing the 
+db.create_all() command, a table with same name as the lower cased Class name gets created in SQLite database, 
+so in this case a table named 'product' is created with the defined schema. 
+Also, if Class name has a name like MyProduct then table would be named as my_product.
+
+If you're getting an empty object for your JSON response, you need to add the 'many' option to the 'dump' method.
+dump(arr_objs, many=True)
+
+For those getting this error "TypeError: __init__() got an unexpected keyword argument 'strict'".
+(in my case, lines 53 and 54 in app.py)
+Try to remove strict=True from both Schemas, as from marshmallow 3.x.x, Schemas are always strict.
+More info here: https://marshmallow.readthedocs.io/en/stable/upgrading.html

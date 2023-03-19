@@ -26,6 +26,33 @@ db = SQLAlchemy(app)
 # Init marshmallow
 ma = Marshmallow(app)
 
+# Product Class/Model (for whatever objects we are making the application, it's important to create a class for that object)
+class ProductClass(db.Model):
+    # db is our sql element and Model gives us some predefined methods
+
+    # defining our fields
+    id = db.Column(db.Integer, primary_key=True) # the auto increment is by default true
+    name = db.Column(db.String(100), unique = True) # always pass the datatype of the field to the Column() first
+    description = db.Column(db.String(200))
+    price = db.Column(db.Float)
+    qty = db.Column(db.Integer)
+
+    # constructor definition
+    def __init__(self, name, description, price, qty):
+        self.name = name
+        self.description = description
+        self.price = price
+        self.qty = qty
+
+# Product Schema Definition
+class ProductSchema(ma.Schema):
+    class Meta: # this is the class we use to declare which fields to show during a get request
+        fields = ('id', 'name', 'description', 'price', 'qty')
+
+# Init schema
+product_schema = ProductSchema()
+products_schema = ProductSchema(many=True) # many = True indicates that we are dealing with multiple products
+
 # Run server
 if __name__ == '__main__':
     app.run(debug=True)
